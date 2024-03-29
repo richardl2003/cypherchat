@@ -10,7 +10,7 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all() 
 
     # tells the view type of data we need to accept
-    serializer_class = User
+    serializer_class = UserSerializer
 
     # specifies who can call this view
     permission_classes = [AllowAny] 
