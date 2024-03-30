@@ -1,9 +1,15 @@
 import { Text, View, StyleSheet, SafeAreaView } from "react-native";
 import { Button, Title } from "../components";
 import { useNavigate } from "react-router-native"
+import { useEffect } from "react"
+import kdc from "../utils/kdc"
 
 const Home = () => {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    kdc.clear()
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>

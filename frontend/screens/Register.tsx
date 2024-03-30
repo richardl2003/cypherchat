@@ -29,6 +29,8 @@ const Register = () => {
     // Validate the password
     if (password !== validPassword) {
       setPasswordError('Passwords do not match')
+      setLoading(false)
+      return
     } else {
       setPasswordError('')
     }

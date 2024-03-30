@@ -20,6 +20,7 @@ import { kdc, api } from "../utils"
 
 const Login = () => {
 
+  // TODO: Handle error state
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -32,8 +33,8 @@ const Login = () => {
     // Call backend to get the access and refresh token
     try {
       const response = await api.post("/api/token/", { username, password })
-      await kdc.set(ACCESS_TOKEN, response.data.access)
-      await kdc.set(REFRESH_TOKEN, response.data.refresh)
+      kdc.set(ACCESS_TOKEN, response.data.access)
+      kdc.set(REFRESH_TOKEN, response.data.refresh)
       navigate("/")
     } catch (error) {
       console.log(error)
@@ -63,6 +64,7 @@ const Login = () => {
           />
           {loading && <ActivityIndicator size="large" color="black" />}
           <Button title="Login" onPress={handleLogin} />
+          <Button title="Register" onPress={() => navigate("/register")} />
         </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

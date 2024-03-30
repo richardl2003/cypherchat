@@ -11,7 +11,7 @@ const api = axios.create({
 api.interceptors.request.use(
     async (config) => {
         console.log(`config: ${config.baseURL}`)
-        const token = await kdc.get(ACCESS_TOKEN)
+        const token = kdc.get(ACCESS_TOKEN)
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
