@@ -1,27 +1,17 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'
 
-async function set(key: string, value: string) {
-    try {
-        await AsyncStorage.setItem(key, value);
-    } catch (error) {
-        console.log(error);
-    }
+function set(key: string, value: string) {
+    SecureStore.setItem(key, value)
 }
 
-async function get(key: string) {
-    try {
-        return await AsyncStorage.getItem(key);
-    } catch (error) {
-        console.log(error);
-    }
+function get(key: string) {
+    return SecureStore.getItem(key)
 }
 
-async function clear() {
-    try {
-        await AsyncStorage.clear();
-    } catch (error) {
-        console.log(error);
-    }
+function clear() {
+    SecureStore.deleteItemAsync(ACCESS_TOKEN)
+    SecureStore.deleteItemAsync(REFRESH_TOKEN)
 }
 
 export default { set, get, clear }

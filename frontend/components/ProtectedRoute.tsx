@@ -1,47 +1,48 @@
 import { Navigate } from "react-router-native";
+import { Text } from "react-native";
 import { jwtDecode } from "jwt-decode"
 import api from '../utils/api';
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react"
 import kdc from "../utils/kdc"
+import "core-js/stable/atob"
 
 function ProtectedRoute({ children }: any) {
-    const [isAuthorized, setIsAuthorized] = useState(false)
+    const [isAuthorized, setIsAuthorized] = useState<null | boolean>(null)
 
     // When the protected route is loaded, check if the user is authorized
     useEffect(() => {
-        auth()
+        auth().catch(() => setIsAuthorized(false))
     }, [])
 
     // check if we need to refresh
     const auth = async () => {
-
-        // TODO: this is a little scuffed
-        const token = await kdc.get(ACCESS_TOKEN)
-        if (token) {
-            console.log(`Token: ${token}`)
-            // get expiration date of the token
-            const decode = jwtDecode(token)
-            const currentTime = Date.now() / 1000
-
-            // if the token is expired, refresh it
-            if (decode?.exp && decode.exp < currentTime) {
-                await refreshToken()
-            }            
-        } else {
+        const token = kdc.get(ACCESS_TOKEN)
+        if (!token) {
+            console.log("No token")
             setIsAuthorized(false)
-            return
-        }
+            return 
+        } 
+        // get expiration date of the token
+        const decode = jwtDecode(token)
+        const currentTime = Date.now() / 1000
+
+        // if the token is expired, refresh it
+        if (decode.exp !== undefined && decode.exp < currentTime) {
+            await refreshToken()
+        } else {
+            setIsAuthorized(true)
+        }       
     }
     
     const refreshToken = async () => {
-        const refreshToken = await kdc.get(REFRESH_TOKEN)
+        const refreshToken =  kdc.get(REFRESH_TOKEN)
         try {
             const response = await api.post("/api/token/refresh/", {
                 refresh: refreshToken
             })
             if (response.status === 200) {
-                await kdc.set(ACCESS_TOKEN, response.data.access)
+                kdc.set(ACCESS_TOKEN, response.data.access)
                 setIsAuthorized(true)
             } else {
                 setIsAuthorized(false)
@@ -53,12 +54,10 @@ function ProtectedRoute({ children }: any) {
     }
 
     if (isAuthorized == null) {
-        return <div>Loading...</div>
+        return <Text>Loading...</Text>
     }
 
-    console.log(`isAuthorized: ${isAuthorized}`)
-
-    return isAuthorized ? children : <Navigate to="/Home" />
+    return isAuthorized ? children : <Navigate to="/home" />
 }
 
 export default ProtectedRoute
