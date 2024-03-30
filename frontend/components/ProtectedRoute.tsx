@@ -3,41 +3,45 @@ import { jwtDecode } from "jwt-decode"
 import api from '../utils/api';
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react"
+import kdc from "../utils/kdc"
 
 function ProtectedRoute({ children }: any) {
     const [isAuthorized, setIsAuthorized] = useState(false)
 
     // When the protected route is loaded, check if the user is authorized
     useEffect(() => {
-        auth().catch(() => setIsAuthorized(false))
+        auth()
     }, [])
 
     // check if we need to refresh
     const auth = async () => {
-        const token = localStorage.getItem(ACCESS_TOKEN)
-        if (!token) {
+
+        // TODO: this is a little scuffed
+        const token = await kdc.get(ACCESS_TOKEN)
+        if (token) {
+            console.log(`Token: ${token}`)
+            // get expiration date of the token
+            const decode = jwtDecode(token)
+            const currentTime = Date.now() / 1000
+
+            // if the token is expired, refresh it
+            if (decode?.exp && decode.exp < currentTime) {
+                await refreshToken()
+            }            
+        } else {
             setIsAuthorized(false)
             return
-        }
-
-        // get expiration date of the token
-        const decode = jwtDecode(token)
-        const currentTime = Date.now() / 1000
-
-        // if the token is expired, refresh it
-        if (decode?.exp && decode.exp < currentTime) {
-            await refreshToken()
         }
     }
     
     const refreshToken = async () => {
-        const refreshToken = localStorage.getItem(REFRESH_TOKEN)
+        const refreshToken = await kdc.get(REFRESH_TOKEN)
         try {
             const response = await api.post("/api/token/refresh/", {
                 refresh: refreshToken
             })
             if (response.status === 200) {
-                localStorage.setItem(ACCESS_TOKEN, response.data.access)
+                await kdc.set(ACCESS_TOKEN, response.data.access)
                 setIsAuthorized(true)
             } else {
                 setIsAuthorized(false)
@@ -52,7 +56,9 @@ function ProtectedRoute({ children }: any) {
         return <div>Loading...</div>
     }
 
-    return isAuthorized ? children : <Navigate to="/login" />
+    console.log(`isAuthorized: ${isAuthorized}`)
+
+    return isAuthorized ? children : <Navigate to="/Home" />
 }
 
 export default ProtectedRoute

@@ -1,12 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { NativeRouter, Routes, Route, Navigate } from "react-router-native"
+import { Login, Register, Home, Dummy } from './screens';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NativeRouter>
+      <Routes>
+        <Route 
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Dummy />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </NativeRouter>
   );
 }
 
