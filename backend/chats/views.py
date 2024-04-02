@@ -11,11 +11,6 @@ class CreateChatView(generics.CreateAPIView):
     serializer_class = ChatSerializer
     permission_classes = [AllowAny]
 
-class UpdateLastUsedView(generics.UpdateAPIView):
-    queryset = Chat.objects.all()
-    serializer_class = ChatSerializer
-    permission_classes = [AllowAny]
-
 class ChatListView(generics.ListAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
