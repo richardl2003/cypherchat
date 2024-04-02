@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-function ContactList() {
+function Summary() {
     return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Contact!</Text>
@@ -8,4 +8,4 @@ function ContactList() {
     );
 }
 
-export default ContactList
+export default Summary
