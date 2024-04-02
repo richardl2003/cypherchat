@@ -18,7 +18,7 @@ class ChatListView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.kwargs['user']
-        return Chat.objects.filter(members=user)
+        return Chat.objects.filter(members=user).order_by("-last_used")
     
 class SendMessageView(generics.CreateAPIView):
     queryset = Message.objects.all()
