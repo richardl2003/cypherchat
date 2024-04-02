@@ -1,48 +1,22 @@
-  import { View, Text } from 'react-native';
-  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-  import { NavigationContainer } from '@react-navigation/native';
-  import Dummy from './Dummy';
+import { View, Text } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { ChatList, ContactList, Profile } from '../components/';
 
-  const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
+const UserHomePage = () => {
 
-  function ChatScreen() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Chats!</Text>
-      </View>
+  return (
+      <NavigationContainer>
+          <Tab.Navigator>
+              <Tab.Screen name="Chat" component={ChatList} />
+              <Tab.Screen name="Contacts" component={ContactList} />
+              <Tab.Screen name="Profile" component={Profile} />
+          </Tab.Navigator>
+      </NavigationContainer>
+
     );
-  }
+};
 
-  function ContactScreen() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Contacts!</Text>
-      </View>
-    );
-  }
-
-  function ProfileScreen() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Profile!</Text>
-      </View>
-    );
-  }
-
-  
-  const UserHomePage = () => {
-  
-    return (
-        <NavigationContainer>
-            <Tab.Navigator>
-                <Tab.Screen name="Chat" component={ChatScreen} />
-                <Tab.Screen name="Contacts" component={ContactScreen} />
-                <Tab.Screen name="Profile" component={ProfileScreen} />
-            </Tab.Navigator>
-        </NavigationContainer>
-
-      );
-  };
-  
-  export default UserHomePage;
+export default UserHomePage;
