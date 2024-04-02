@@ -11,7 +11,7 @@ const UserHomePage = () => {
       <NavigationContainer>
           <Tab.Navigator>
               <Tab.Screen name="Chat" component={ChatList} />
-              <Tab.Screen name="Contacts" component={Summary} />
+              <Tab.Screen name="Summary" component={Summary} />
               <Tab.Screen name="Profile" component={Profile} />
           </Tab.Navigator>
       </NavigationContainer>
