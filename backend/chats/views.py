@@ -39,7 +39,6 @@ class ChatLogView(generics.ListAPIView):
             cipher = AES.new(chat_key, AES.MODE_EAX, nonce=obj.nonce)
             message = cipher.decrypt_and_verify(obj.ciphertext, obj.tag)
             message = message.decode('utf-8')
-            print(message)
 
             obj.message = message
         return log
