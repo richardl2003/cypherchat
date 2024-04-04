@@ -2,12 +2,15 @@ import { Text, View, StyleSheet, SafeAreaView } from "react-native";
 import { Button, Title } from "../components";
 import { useNavigate } from "react-router-native"
 import { useEffect } from "react"
+import { useStore } from "../utils/store"
 import kdc from "../utils/kdc"
 
 const Home = () => {
   const navigate = useNavigate()
+  const setUser = useStore((state) => state.setUser)
 
   useEffect(() => {
+    setUser({id: 0, username: "", first_name: "", last_name: "", email: ""})
     kdc.clear()
   }, [])
 
