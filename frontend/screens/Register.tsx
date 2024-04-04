@@ -52,7 +52,7 @@ const Register = () => {
   try {
     await api.post("/api/user/register/", payload);
     navigate("/login");
-  } catch (error) {
+  } catch (error: any) {
     // Email error
     if (error.response && error.response.data.email) {
       setEmailError(error.response.data.email[0]);
