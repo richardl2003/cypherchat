@@ -48,17 +48,16 @@ const Register = () => {
         email: email,
     };
 
-  // Call API to register the user
+  // Call api to register the user
   try {
     await api.post("/api/user/register/", payload);
-    navigate("/login"); // Navigate to login upon successful registration
+    navigate("/login");
   } catch (error) {
     // Email error
     if (error.response && error.response.data.email) {
       setEmailError(error.response.data.email[0]);
     } else {
-      // Generic error handling or logging
-      console.error('Registration error:', error);
+      console.error( error);
       }
     } finally {
       setLoading(false)
