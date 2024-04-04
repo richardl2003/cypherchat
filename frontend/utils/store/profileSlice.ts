@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand'
-import { Profile, ProfileSlice } from '../models/profileModels'
+import { Profile, ProfileSlice } from '../../models/profileModels'
 
 
 export const createProfileSlice: StateCreator<ProfileSlice> = (set) => ({
