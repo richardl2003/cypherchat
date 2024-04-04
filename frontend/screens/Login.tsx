@@ -16,9 +16,11 @@ import { useState } from "react"
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants';
 import { useNavigate } from "react-router-native"
 import { kdc, api } from "../utils"
-
+import { useStore } from '../utils/store';
 
 const Login = () => {
+
+  const setUser = useStore(state => state.setUser)
 
   // TODO: Handle error state
   const [username, setUsername] = useState('')
@@ -33,8 +35,11 @@ const Login = () => {
     // Call backend to get the access and refresh token
     try {
       const response = await api.post("/api/token/", { username, password })
-      kdc.set(ACCESS_TOKEN, response.data.access)
-      kdc.set(REFRESH_TOKEN, response.data.refresh)
+      kdc.set(ACCESS_TOKEN, response.data.tokens.access)
+      kdc.set(REFRESH_TOKEN, response.data.tokens.refresh)
+
+      // Save user information to data store
+      setUser(response.data.user)
       navigate("/")
     } catch (error) {
       console.log(error)
