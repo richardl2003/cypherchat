@@ -10,7 +10,7 @@ function Button(props: any) {
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 20,
-                width: 300
+                width: props.width ? props.width : 300
             }}
             onPress={props.onPress}  
         >
