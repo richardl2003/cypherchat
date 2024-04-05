@@ -10,3 +10,6 @@ app-general:
 
 server:
 	. env/bin/activate && python backend/manage.py runserver ${ip}:8000
+
+redis:
+	redis-server 

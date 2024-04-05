@@ -49,7 +49,7 @@ SIMPLE_JWT = {
 # Channel Config 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.redis.cored.RedisChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [('127.0.0.1', 6379)]
         }
