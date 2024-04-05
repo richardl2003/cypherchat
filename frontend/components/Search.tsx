@@ -8,35 +8,21 @@ import {
     KeyboardAvoidingView, 
     FlatList
 } from 'react-native';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import Empty from './Empty'
 import { SearchRow } from './searching'
+import { useStore } from '../utils/store';
 
 function Search() {
     const [query, setQuery] = useState('')
-    const searchList = [
-        {
-            name: 'Jemima Vijayasenan',
-            username: 'jemimavi',
-            status: 'connected'
-        },
-        {
-            name: 'Samantha Smith',
-            username: 'samsmith',
-            status: 'pending-me'
-        },
-        {
-            name: 'John Doe',
-            username: 'johndoe',
-            status: 'pending-other'
-        },
-        {
-            name: 'Jane Doe',
-            username: 'janedoe',
-            status: 'not-connected'
-        }
-    ]
+    const searchList = useStore((state) => state.searchList)
+    const searchUsers = useStore((state) => state.searchUsers)
+
+    // Only perform search on query change
+    useEffect(() => {
+        searchUsers(query)
+    }, [query])
 
     return (
         <SafeAreaView style={styles.container}>

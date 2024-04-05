@@ -32,5 +32,17 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
         const socket = get().socket
         if (socket) socket.close()
         set((state) => ({socket: state.socket = null}))
+    },
+    searchList: null,
+    searchUsers: (query: string) => {
+        if (query) {
+            const socket = get().socket
+            socket.send(JSON.stringify({
+                source: 'search',
+                query: query
+            }))
+        } else {
+            set((state) => ({searchList: state.searchList = null}))
+        }
     }
 })
