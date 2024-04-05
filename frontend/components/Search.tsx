@@ -1,9 +1,25 @@
-import { TextInput, View, SafeAreaView, StyleSheet, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView } from 'react-native';
+import { 
+    TextInput, 
+    View, 
+    SafeAreaView, 
+    StyleSheet, 
+    TouchableWithoutFeedback, 
+    Keyboard, 
+    KeyboardAvoidingView, 
+    FlatList
+} from 'react-native';
 import { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
+import Empty from './Empty'
 
 function Search() {
     const [query, setQuery] = useState('')
+    const searchList = [
+        {
+            name: 'Jemima Vijayasenan',
+            username: 'jemimavi'
+        }
+    ]
 
     return (
         <SafeAreaView style={styles.container}>
@@ -23,11 +39,27 @@ function Search() {
                                 size={20}
                                 color='#b0b0b0'
                                 style={styles.searchIcon}
-                            />
+                            />                             
                         </View>
+                        {searchList === null ? (
+                            <Empty 
+                                name='magnifying-glass'
+                                message={'Search for friends'}
+                                centered={false}
+                            />
+                            ) : searchList.length === 0 ? (
+                            <Empty 
+                                name='triangle-exclamation'
+                                message={`No results found for: ${query}`}
+                                centered={false}
+                            />
+                        ) : (
+                            <View />
+                        )
+                    }                         
                     </View>
-                </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
+                </TouchableWithoutFeedback>               
+            </KeyboardAvoidingView>           
         </SafeAreaView>
     );
 }
