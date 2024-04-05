@@ -9,3 +9,7 @@ sqlparse
 psycopg2-binary
 python-dotenv
 pycryptodome
+channels
+channels-redis
+daphne
+django-channels-jwt-auth-middleware

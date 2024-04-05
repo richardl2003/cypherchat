@@ -1,21 +1,49 @@
-import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { ChatList, Summary, Profile } from '../components/';
+import { ChatList, Notification, Profile } from '../components/';
+import { useStore } from '../utils/store';
+import { useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
 const UserHomePage = () => {
 
-  return (
-      <NavigationContainer>
-          <Tab.Navigator>
-              <Tab.Screen name="Chat" component={ChatList} />
-              <Tab.Screen name="Summary" component={Summary} />
-              <Tab.Screen name="Profile" component={Profile} />
-          </Tab.Navigator>
-      </NavigationContainer>
+    const socketConnect = useStore((state) => state.socketConnect)
+    const socketClose = useStore((state) => state.socketClose)
 
+    useEffect(() => {
+        socketConnect()
+        return () => {
+            socketClose()
+        }
+    })
+
+    return (
+        <NavigationContainer>
+            <Tab.Navigator
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({ focused, color, size }) => {
+                        let iconName;
+
+                        if (route.name === 'Chat') {
+                            iconName = focused ? 'chatbubble' : 'chatbubble-outline';
+                        } else if (route.name === 'Notification') {
+                            iconName = focused ? 'notifications' : 'notifications-outline';
+                        } else if (route.name === 'Profile') {
+                            iconName = focused ? 'person' : 'person-outline';
+                        }
+                        return <Ionicons name={iconName} size={size} color={color} />;
+                    },
+                    tabBarActiveTintColor: 'tomato',
+                    tabBarInactiveTintColor: 'gray',
+                })}
+            >
+                <Tab.Screen name="Chat" component={ChatList} />
+                <Tab.Screen name="Notification" component={Notification} />
+                <Tab.Screen name="Profile" component={Profile} />
+            </Tab.Navigator>
+        </NavigationContainer>
     );
 };
 

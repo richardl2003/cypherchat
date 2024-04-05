@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 
-function Summary() {
+function Notification() {
     return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <Text>Contact!</Text>
@@ -8,4 +8,4 @@ function Summary() {
     );
 }
 
-export default Summary
+export default Notification
