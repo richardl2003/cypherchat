@@ -7,7 +7,7 @@ type Profile = {
 }
 
 interface ProfileSlice {
-    user: Profile
+    user: Profile | null
     setUser: (profile: Profile) => void
 }
 
