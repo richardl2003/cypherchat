@@ -47,7 +47,7 @@ function Search() {
                         {searchList === null ? (
                             <Empty 
                                 name='magnifying-glass'
-                                message={'Search for friends'}
+                                message={'Search for employee'}
                                 centered={false}
                             />
                             ) : searchList.length === 0 ? (
