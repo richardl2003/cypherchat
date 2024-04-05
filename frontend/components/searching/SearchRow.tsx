@@ -54,7 +54,7 @@ function SearchRow(props: any) {
     return (
         <View style={styles.container}>
             <View style={styles.viewContainer}>
-                <Text style={styles.firstName}>{props.user.name}</Text>
+                <Text style={styles.firstName}>{props.user.first_name}</Text>
                 <Text style={styles.username}>@{props.user.username}</Text>
             </View>
             <SearchButton user={props.user} />

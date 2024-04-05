@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Chat, Message
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES
+from django.contrib.auth.models import User
 
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,6 +43,15 @@ class MessageSerializer(serializers.ModelSerializer):
         chat.save()
 
         return instance
+    
+class SearchSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
 
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'status']
+
+    def get_status(self, obj):
+        return 'not-connected'
          
 
