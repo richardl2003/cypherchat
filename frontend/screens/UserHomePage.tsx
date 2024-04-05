@@ -24,7 +24,7 @@ const UserHomePage = () => {
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({ focused, color, size }) => {
-                        let iconName: string = '';
+                        let iconName: any;
 
                         if (route.name === 'Chat') {
                             iconName = focused ? 'chatbubble' : 'chatbubble-outline';
