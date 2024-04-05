@@ -1,4 +1,4 @@
-ip := $(shell ipconfig getifaddr en1)
+ip := $(shell ipconfig getifaddr en0)
 
 app-android:
 	@echo "EXPO_PUBLIC_API_URL='http://${ip}:8000'" > frontend/.env
@@ -9,9 +9,4 @@ app-general:
 	cd frontend && npm run start
 
 server:
-	. env/bin/activate && python3 backend/manage.py runserver ${ip}:8000
-
-migrate:
-	python3 backend/manage.py check
-	python3 backend/manage.py makemigrations
-	python3 backend/manage.py migrate
+	. env/bin/activate && python backend/manage.py runserver ${ip}:8000
