@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { ChatList, Notification, Profile } from '../components/';
+import { ChatList, Notification, Profile, Search } from '../components/';
 import { useStore } from '../utils/store';
 import { useEffect } from 'react';
 
@@ -19,13 +19,14 @@ const UserHomePage = () => {
     })
 
     return (
-        <NavigationContainer>
-            <Tab.Navigator>
-                <Tab.Screen name="Chat" component={ChatList} />
-                <Tab.Screen name="Notification" component={Notification} />
-                <Tab.Screen name="Profile" component={Profile} />
-            </Tab.Navigator>
-        </NavigationContainer>
+<NavigationContainer>
+    <Tab.Navigator>
+        <Tab.Screen name="Chat" component={ChatList} />
+        <Tab.Screen name="Search" component={Search} /> 
+        <Tab.Screen name="Notification" component={Notification} />
+        <Tab.Screen name="Profile" component={Profile} />
+    </Tab.Navigator>
+</NavigationContainer>
 
     );
 };

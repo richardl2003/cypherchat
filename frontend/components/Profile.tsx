@@ -14,7 +14,6 @@ function Profile() {
     function handleLogout() {
         // Reset the user state and clear the token
         kdc.clear()
-        setUser({id: 0, username: "", first_name: "", last_name: "", email: ""})
         navigate('/home')
     }
 
