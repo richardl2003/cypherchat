@@ -5,7 +5,7 @@ import { WebSocketSlice } from '../../models/webSocketModel'
 
 const ADDRESS = process.env.EXPO_PUBLIC_API_URL
 
-export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set) => ({
+export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => ({
     socket: null,
     socketConnect: async () => {
         const access = kdc.get(ACCESS_TOKEN)
@@ -29,7 +29,8 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set) => ({
         set((state) => ({socket: state.socket = socket}))
      },
     socketClose: () => {
-        set((state) => ({socket: state.socket = state.socket.close()}))
+        const socket = get().socket
+        if (socket) socket.close()
         set((state) => ({socket: state.socket = null}))
     }
 })
