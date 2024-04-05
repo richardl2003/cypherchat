@@ -42,7 +42,8 @@ const Login = () => {
       setUser(response.data.user)
       navigate("/")
     } catch (error) {
-      console.log(error)
+      console.log(error) 
+      navigate("/login-error")
     } finally {
       setLoading(false)
     }
