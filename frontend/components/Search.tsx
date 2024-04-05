@@ -11,13 +11,30 @@ import {
 import { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import Empty from './Empty'
+import { SearchRow } from './searching'
 
 function Search() {
     const [query, setQuery] = useState('')
     const searchList = [
         {
             name: 'Jemima Vijayasenan',
-            username: 'jemimavi'
+            username: 'jemimavi',
+            status: 'connected'
+        },
+        {
+            name: 'Samantha Smith',
+            username: 'samsmith',
+            status: 'pending-me'
+        },
+        {
+            name: 'John Doe',
+            username: 'johndoe',
+            status: 'pending-other'
+        },
+        {
+            name: 'Jane Doe',
+            username: 'janedoe',
+            status: 'not-connected'
         }
     ]
 
@@ -54,7 +71,13 @@ function Search() {
                                 centered={false}
                             />
                         ) : (
-                            <View />
+                            <FlatList 
+                                data={searchList}
+                                renderItem={({ item }) => (
+                                    <SearchRow user={item} />
+                                )}
+                                keyExtractor={item => item.username}
+                            />
                         )
                     }                         
                     </View>
