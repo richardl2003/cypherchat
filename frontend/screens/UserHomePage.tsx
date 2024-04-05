@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { ChatList, Notification, Profile } from '../components/';
+import { ChatList, Notification, Profile, Search } from '../components/';
 import { useStore } from '../utils/store';
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,7 +24,7 @@ const UserHomePage = () => {
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({ focused, color, size }) => {
-                        let iconName;
+                        let iconName: any;
 
                         if (route.name === 'Chat') {
                             iconName = focused ? 'chatbubble' : 'chatbubble-outline';
@@ -32,6 +32,8 @@ const UserHomePage = () => {
                             iconName = focused ? 'notifications' : 'notifications-outline';
                         } else if (route.name === 'Profile') {
                             iconName = focused ? 'person' : 'person-outline';
+                        } else if (route.name === 'Search') {
+                            iconName = focused ? 'search': 'search-outline'
                         }
                         return <Ionicons name={iconName} size={size} color={color} />;
                     },
@@ -40,6 +42,7 @@ const UserHomePage = () => {
                 })}
             >
                 <Tab.Screen name="Chat" component={ChatList} />
+                <Tab.Screen name="Search" component={Search} />
                 <Tab.Screen name="Notification" component={Notification} />
                 <Tab.Screen name="Profile" component={Profile} />
             </Tab.Navigator>
