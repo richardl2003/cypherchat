@@ -1,7 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from .serializers import SearchSerializer, RequestSerializer
 import json
 from .models import Connection
@@ -49,6 +49,28 @@ class ChatConsumer(WebsocketConsumer):
             Q(last_name__istartswith=query)
         ).exclude(
             username=self.username
+        ).annotate(
+            pending_other=Exists(
+                Connection.objects.filter(
+                    sender=self.scope['user'],
+                    receiver=OuterRef('id'),
+                    accepted=False
+                )
+            ),
+            pending_me=Exists(
+                Connection.objects.filter(
+                    sender=OuterRef('id'),
+                    receiver=self.scope['user'],
+                    accepted=False
+                )
+            ),
+            connected=Exists(
+                Connection.objects.filter(
+                    Q(sender=self.scope['user'], receiver=OuterRef('id')) |
+                    Q(sender=OuterRef('id'), receiver=self.scope['user']),
+                    accepted=True
+                )
+            )
         )
         serialized = SearchSerializer(users, many=True)
         self.send_group(self.username, 'search', serialized.data) 

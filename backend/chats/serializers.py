@@ -62,6 +62,12 @@ class SearchSerializer(serializers.ModelSerializer):
         fields = ['username', 'first_name', 'status']
 
     def get_status(self, obj):
+        if obj.pending_other:
+            return 'pending-other'
+        elif obj.pending_me:
+            return 'pending-me'
+        elif obj.connected:
+            return 'connected'
         return 'not-connected'
     
 class RequestSerializer(serializers.ModelSerializer):
