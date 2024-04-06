@@ -9,6 +9,7 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
     const handlers: { [key: string]: (data: any) => void } = {
         'search': (data) => set((state) => ({searchList: state.searchList = data})),
         'request_connect': (data) => {
+            console.log('request_connect', data)
             const sl = get().searchList
             if (sl) {
                 if (!sl.includes(data.sender)) {
@@ -28,7 +29,8 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                     }
                 }
             }
-        }
+        },
+        'request_list': (data) => set((state) => ({ requestList: state.requestList = [...data]}))
         // Add more handlers as needed
     };
 
@@ -43,9 +45,13 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
             // Listening to socket events
             socket.onopen = () => {
                 console.log('socket opened')
+                socket.send(JSON.stringify({
+                    source: 'request_list'
+                }))
             }
             socket.onmessage = (event) => {
                 const parsed = JSON.parse(event.data)
+                console.log('socket message', JSON.stringify(parsed))
                 if (handlers[parsed.source]) {
                     handlers[parsed.source](parsed.data)
                 }
@@ -88,6 +94,15 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
             } else {
                 set((state) => ({requestList: state.requestList = null}))
             }
-        }    
+        },
+        requestAccept: (username: string) => {
+            const socket = get().socket
+            if (socket) {
+                socket.send(JSON.stringify({
+                    source: 'request_accept',
+                    username: username
+                }))
+            }
+        } 
     }
 }

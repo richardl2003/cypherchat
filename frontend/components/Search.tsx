@@ -11,7 +11,7 @@ import {
 import { useState, useEffect } from 'react'
 import { Ionicons } from '@expo/vector-icons'
 import Empty from './Empty'
-import { SearchRow } from './searching'
+import SearchRow from './SearchRow'
 import { useStore } from '../utils/store';
 
 function Search() {

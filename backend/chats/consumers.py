@@ -6,7 +6,7 @@ from .serializers import SearchSerializer, RequestSerializer
 import json
 from .models import Connection
 
-class ChatConsumer(WebsocketConsumer):
+class ChatConsumer(WebsocketConsumer):  
 
     def connect(self):
         user = self.scope['user']
@@ -32,13 +32,50 @@ class ChatConsumer(WebsocketConsumer):
 
         # Get type of request
         source = res.get('source')
-        handler = AbstractHandlerFactory().handlers.get(source)
+        handlers = {
+            'search': self.receive_search,
+            'request_connect': self.receive_request_connect,
+            'request_list': self.receive_request_list,
+        }           
+        
+        handler = handlers.get(source)
+        handler(res)
 
-        # Process the request
-        serialized_response = handler(res, self.scope['user']).handle()
+    def receive_search(self, data):
+        query = data.get('query')
+        users = User.objects.filter(
+            Q(username__istartswith=query) |
+            Q(first_name__istartswith=query) |
+            Q(last_name__istartswith=query)
+        ).exclude(
+            username=self.username
+        )
+        serialized = SearchSerializer(users, many=True)
+        self.send_group(self.username, 'search', serialized.data) 
 
-        # Send back to the user
-        self.send_group(self.username, source, serialized_response.data)
+    def receive_request_connect(self, data):
+        username = data.get('username')
+        try:
+            receiver = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return
+        connection, _ = Connection.objects.get_or_create(
+            sender=self.scope['user'],
+            receiver=receiver
+        )
+        serialized = RequestSerializer(connection)
+
+        self.send_group(connection.sender.username, 'request_connect', serialized.data)
+        self.send_group(connection.receiver.username, 'request_connect', serialized.data)
+
+    def receive_request_list(self, data):
+        user = self.scope['user']
+        connections = Connection.objects.filter(
+            receiver=user,
+            accepted=False
+        )
+        serialized = RequestSerializer(connections, many=True)
+        self.send_group(user.username, 'request_list', serialized.data)
 
     def send_group(self, group, source, data):
         response = {
@@ -51,53 +88,7 @@ class ChatConsumer(WebsocketConsumer):
         )
     def broadcast_group(self, data):
         data.pop('type')
-        self.send(text_data=json.dumps(data))
-
-# OOP For handling the different requests 
-class AbstractHandler:
-    def handle(self):
-        pass
-
-class AbstractHandlerFactory:
-    def __init__(self):
-        self.handlers = {
-            'search': SearchHandler,
-            'request_connect': RequestConnectHandler 
-        }
-
-class SearchHandler(AbstractHandler):
-    def __init__(self, data, current_user):
-        self.data = data
-        self.current_user = current_user
-    def handle(self):
-        query = self.data.get('query')
-        users = User.objects.filter(
-            Q(username__istartswith=query) |
-            Q(first_name__istartswith=query) |
-            Q(last_name__istartswith=query)
-        ).exclude(
-            username=self.current_user.username
-        )
-        serialized = SearchSerializer(users, many=True)
-        return serialized
-
-class RequestConnectHandler(AbstractHandler):
-    def __init__(self, data, current_user):
-        self.data = data
-        self.current_user = current_user
-    def handle(self):
-        username = self.data.get('username')
-        try:
-            receiver = User.objects.get(username=username)
-        except User.DoesNotExist:
-            print("Error: User does not exist")
-            return
-        connection, _ = Connection.objects.get_or_create(
-            sender=self.current_user,
-            receiver=receiver
-        )
-        serialized = RequestSerializer(connection)
-        return serialized
+        self.send(text_data=json.dumps(data))   
 
 
 
