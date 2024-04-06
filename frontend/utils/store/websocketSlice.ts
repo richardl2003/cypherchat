@@ -8,6 +8,27 @@ const ADDRESS = process.env.EXPO_PUBLIC_API_URL
 export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => {
     const handlers: { [key: string]: (data: any) => void } = {
         'search': (data) => set((state) => ({searchList: state.searchList = data})),
+        'request_connect': (data) => {
+            const sl = get().searchList
+            if (sl) {
+                if (!sl.includes(data.sender)) {
+                    const index = sl.findIndex((user) => user.username === data.receiver.username)
+                    if (index !== -1) {
+                        sl[index].status = 'pending-other'
+                        set((state) => ({searchList: state.searchList = [...sl]}))
+                    }
+                } else {
+                    const rl = get().requestList
+                    if (rl) {
+                        const index = rl.findIndex((user) => user.username === data.sender.username)
+                        if (index === -1) {
+                            rl.unshift(data)
+                            set((state) => ({requestList: state.requestList = [...rl]}))
+                        }
+                    }
+                }
+            }
+        }
         // Add more handlers as needed
     };
 
@@ -54,6 +75,18 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 }
             } else {
                 set((state) => ({searchList: state.searchList = null}))
+            }
+        },
+        requestList: null,
+        requestConnect: (username: string) => {
+            const socket = get().socket
+            if (socket) {
+                socket.send(JSON.stringify({
+                    source: 'request_connect',
+                    username: username
+                }))
+            } else {
+                set((state) => ({requestList: state.requestList = null}))
             }
         }    
     }

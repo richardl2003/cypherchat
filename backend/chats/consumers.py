@@ -2,8 +2,9 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from django.db.models import Q
-from .serializers import SearchSerializer
+from .serializers import SearchSerializer, RequestSerializer
 import json
+from .models import Connection
 
 class ChatConsumer(WebsocketConsumer):
 
@@ -34,10 +35,10 @@ class ChatConsumer(WebsocketConsumer):
         handler = AbstractHandlerFactory().handlers.get(source)
 
         # Process the request
-        serialized_response = handler(res, self.username).handle()
+        serialized_response = handler(res, self.scope['user']).handle()
 
         # Send back to the user
-        self.send_group(self.username, 'search', serialized_response.data)
+        self.send_group(self.username, source, serialized_response.data)
 
     def send_group(self, group, source, data):
         response = {
@@ -59,24 +60,45 @@ class AbstractHandler:
 
 class AbstractHandlerFactory:
     def __init__(self):
-        self.handlers = {'search': SearchHandler}
+        self.handlers = {
+            'search': SearchHandler,
+            'request_connect': RequestConnectHandler 
+        }
 
 class SearchHandler(AbstractHandler):
     def __init__(self, data, current_user):
         self.data = data
         self.current_user = current_user
     def handle(self):
-        print('search handler', self.data, self.current_user)
         query = self.data.get('query')
         users = User.objects.filter(
             Q(username__istartswith=query) |
             Q(first_name__istartswith=query) |
             Q(last_name__istartswith=query)
         ).exclude(
-            username=self.current_user
+            username=self.current_user.username
         )
-
         serialized = SearchSerializer(users, many=True)
         return serialized
+
+class RequestConnectHandler(AbstractHandler):
+    def __init__(self, data, current_user):
+        self.data = data
+        self.current_user = current_user
+    def handle(self):
+        username = self.data.get('username')
+        try:
+            receiver = User.objects.get(username=username)
+        except User.DoesNotExist:
+            print("Error: User does not exist")
+            return
+        connection, _ = Connection.objects.get_or_create(
+            sender=self.current_user,
+            receiver=receiver
+        )
+        serialized = RequestSerializer(connection)
+        return serialized
+
+
 
 

@@ -10,6 +10,8 @@ interface WebSocketSlice {
     socketClose: () => void
     searchList: Users[] | null
     searchUsers: (query: string) => void
+    requestList: Users[] | null
+    requestConnect: (username: string) => void
 }
 
 export { WebSocketSlice }
