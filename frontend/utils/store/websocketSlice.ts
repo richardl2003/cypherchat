@@ -73,6 +73,9 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 socket.send(JSON.stringify({
                     source: 'request_list'
                 }))
+                socket.send(JSON.stringify({
+                    source: 'conversation_list'
+                }))
             }
             socket.onmessage = (event) => {
                 const parsed = JSON.parse(event.data)
@@ -128,6 +131,8 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                     username: username
                 }))
             }
-        } 
+        },
+        conversationList: null,
+
     }
 }

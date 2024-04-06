@@ -2,7 +2,7 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from django.db.models import Q, Exists, OuterRef
-from .serializers import SearchSerializer, RequestSerializer
+from .serializers import SearchSerializer, RequestSerializer, ConversationSerializer
 import json
 from .models import Connection
 
@@ -36,7 +36,8 @@ class ChatConsumer(WebsocketConsumer):
             'search': self.receive_search,
             'request_connect': self.receive_request_connect,
             'request_list': self.receive_request_list,
-            'request_accept': self.receive_request_accept
+            'request_accept': self.receive_request_accept,
+            'conversation_list': self.conversation_list
         }           
         
         handler = handlers.get(source)
@@ -115,6 +116,15 @@ class ChatConsumer(WebsocketConsumer):
         serialized = RequestSerializer(connection)
         self.send_group(connection.sender.username, 'request_accept', serialized.data)
         self.send_group(connection.receiver.username, 'request_accept', serialized.data)
+
+    def conversation_list(self, data):
+        user = self.scope['user']
+        connections = Connection.objects.filter(
+            Q(sender=user) | Q(receiver=user),
+            accepted=True
+        )
+        serialized = ConversationSerializer(connections, context={'user': user}, many=True)
+        self.send_group(user.username, 'conversation_list', serialized.data)
 
     def send_group(self, group, source, data):
         response = {

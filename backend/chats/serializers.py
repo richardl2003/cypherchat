@@ -73,7 +73,29 @@ class SearchSerializer(serializers.ModelSerializer):
 class RequestSerializer(serializers.ModelSerializer):
     sender = UserSerializer()
     receiver = UserSerializer()
+    
     class Meta:
         model = Connection
         fields = ['id', 'sender', 'receiver', 'created']
+
+class ConversationSerializer(serializers.ModelSerializer):
+    employee = serializers.SerializerMethodField()
+    preview = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Connection
+        fields = ['id', 'employee', 'preview', 'updated']
+
+    def get_employee(self, obj):
+        # print(f"obj: {obj.sender} {obj.receiver} {self.context['user']}")
+        if obj.sender == self.context['user']:
+            return UserSerializer(obj.receiver).data
+        elif obj.receiver == self.context['user']:
+            return UserSerializer(obj.sender).data
+        else:
+            print('Error: User is not part of this connection')
+    
+    def get_preview(self, obj):
+        return "Preview of conversation"
+    
 
