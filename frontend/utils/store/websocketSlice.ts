@@ -11,21 +11,20 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
         'request_connect': (data) => {
             console.log('request_connect', data)
             const sl = get().searchList
-            if (sl) {
-                if (!sl.includes(data.sender)) {
-                    const index = sl.findIndex((user) => user.username === data.receiver.username)
-                    if (index !== -1) {
-                        sl[index].status = 'pending-other'
-                        set((state) => ({searchList: state.searchList = [...sl]}))
-                    }
-                } else {
-                    const rl = get().requestList
-                    if (rl) {
-                        const index = rl.findIndex((user) => user.username === data.sender.username)
-                        if (index === -1) {
-                            rl.unshift(data)
-                            set((state) => ({requestList: state.requestList = [...rl]}))
-                        }
+            if (sl && !sl.includes(data.sender)) {
+                const index = sl.findIndex((user) => user.username === data.receiver.username)
+                if (index !== -1) {
+                    sl[index].status = 'pending-other'
+                    set((state) => ({searchList: state.searchList = [...sl]}))
+                }
+            } else {
+                const rl = get().requestList
+                console.log('request_list', rl)
+                if (rl) {
+                    const index = rl.findIndex((user) => user.sender.username === data.sender.username)
+                    if (index === -1) {
+                        rl.unshift(data)
+                        set((state) => ({requestList: state.requestList = [...rl]}))
                     }
                 }
             }
