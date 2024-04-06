@@ -3,6 +3,7 @@ from .models import Chat, Message
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES
 from django.contrib.auth.models import User
+from .models import Connection
 
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,6 +45,15 @@ class MessageSerializer(serializers.ModelSerializer):
 
         return instance
     
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "first_name", "last_name", "email", "password"]
+        extra_kwargs = {
+            "password": {"write_only": True},
+            "email": {"required": True},
+        }    
+    
 class SearchSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
 
@@ -52,6 +62,18 @@ class SearchSerializer(serializers.ModelSerializer):
         fields = ['username', 'first_name', 'status']
 
     def get_status(self, obj):
+        if obj.pending_other:
+            return 'pending-other'
+        elif obj.pending_me:
+            return 'pending-me'
+        elif obj.connected:
+            return 'connected'
         return 'not-connected'
-         
+    
+class RequestSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
+    receiver = UserSerializer()
+    class Meta:
+        model = Connection
+        fields = ['id', 'sender', 'receiver', 'created']
 

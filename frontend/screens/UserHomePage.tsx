@@ -28,7 +28,7 @@ const UserHomePage = () => {
 
                         if (route.name === 'Chat') {
                             iconName = focused ? 'chatbubble' : 'chatbubble-outline';
-                        } else if (route.name === 'Notification') {
+                        } else if (route.name === 'Notifications') {
                             iconName = focused ? 'notifications' : 'notifications-outline';
                         } else if (route.name === 'Profile') {
                             iconName = focused ? 'person' : 'person-outline';
@@ -43,7 +43,7 @@ const UserHomePage = () => {
             >
                 <Tab.Screen name="Chat" component={ChatList} />
                 <Tab.Screen name="Search" component={Search} />
-                <Tab.Screen name="Notification" component={Notification} />
+                <Tab.Screen name="Notifications" component={Notification} />
                 <Tab.Screen name="Profile" component={Profile} />
             </Tab.Navigator>
         </NavigationContainer>

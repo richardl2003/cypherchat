@@ -1,4 +1,5 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useStore } from "../utils/store";
 import { FontAwesome6 } from '@expo/vector-icons'
 
 type StatusType = {
@@ -18,12 +19,14 @@ function SearchButton(props: any) {
         )
     }
 
+    const requestConnect = useStore((state) => state.requestConnect)
+
     const data: StatusType = {text: null, disabled: false, onPress: () => {}}
     switch (props.user.status) {
         case 'not-connected':
             data.text = 'Connect'
             data.disabled = false
-            data.onPress = () => {}
+            data.onPress = () => {requestConnect(props.user.username)}
             break
         case 'pending-other':
             data.text = 'Pending'
