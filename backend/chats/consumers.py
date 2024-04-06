@@ -36,6 +36,7 @@ class ChatConsumer(WebsocketConsumer):
             'search': self.receive_search,
             'request_connect': self.receive_request_connect,
             'request_list': self.receive_request_list,
+            'request_accept': self.receive_request_accept
         }           
         
         handler = handlers.get(source)
@@ -98,6 +99,22 @@ class ChatConsumer(WebsocketConsumer):
         )
         serialized = RequestSerializer(connections, many=True)
         self.send_group(user.username, 'request_list', serialized.data)
+
+    def receive_request_accept(self, data):
+        username = data.get('username')
+        try:
+            connection = Connection.objects.get(
+                sender__username=username,
+                receiver=self.scope['user']
+            )
+        except Connection.DoesNotExist:
+            print("Error: Connection does not exist")
+            return
+        connection.accepted = True
+        connection.save()
+        serialized = RequestSerializer(connection)
+        self.send_group(connection.sender.username, 'request_accept', serialized.data)
+        self.send_group(connection.receiver.username, 'request_accept', serialized.data)
 
     def send_group(self, group, source, data):
         response = {

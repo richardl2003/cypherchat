@@ -9,7 +9,6 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
     const handlers: { [key: string]: (data: any) => void } = {
         'search': (data) => set((state) => ({searchList: state.searchList = data})),
         'request_connect': (data) => {
-            console.log('request_connect', data)
             const sl = get().searchList
             if (sl && !sl.includes(data.sender)) {
                 const index = sl.findIndex((user) => user.username === data.receiver.username)
@@ -19,7 +18,6 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 }
             } else {
                 const rl = get().requestList
-                console.log('request_list', rl)
                 if (rl) {
                     const index = rl.findIndex((user) => user.sender.username === data.sender.username)
                     if (index === -1) {
@@ -29,7 +27,35 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 }
             }
         },
-        'request_list': (data) => set((state) => ({ requestList: state.requestList = [...data]}))
+        'request_list': (data) => set((state) => ({ requestList: state.requestList = [...data]})),
+        'request_accept': (data) => {
+            const rl = get().requestList
+            if (rl && !rl.includes(data.receiver)) {
+                const reqIndex = rl.findIndex((user) => user.id === data.id)
+                if (reqIndex !== -1) {
+                    rl.splice(reqIndex, 1)
+                    set((state) => ({ requestList: state.requestList = [...rl]}))
+                }
+            } 
+            const sl = get().searchList
+            if (sl === null) {
+                return
+            }
+            if (sl.includes(data.sender)) {
+                const sIndex = sl.findIndex(
+                    user => user.username === data.sender.username
+                )
+                sl[sIndex].status = 'connected'
+                set((state) => ({ searchList: state.searchList = [...sl]}))
+            } else {
+                const sIndex = sl.findIndex(
+                    (user) => user.username === data.receiver.username
+                )
+                sl[sIndex].status = 'connected'
+                set((state) => ({ searchList: state.searchList = [...sl]}))
+            }
+
+        }
         // Add more handlers as needed
     };
 
