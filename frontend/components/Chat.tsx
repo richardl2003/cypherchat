@@ -1,15 +1,24 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { formatTime } from '../utils/dateFormatter';
+import ProfilePic from '../assets/images/default_avatar.jpg'
 
 function Chat(props: any) {
-
-    const date = new Date(props.item.created).toLocaleDateString()
+    const params = props.item
 
     return (
-        <View style={styles.container}>
-            <View style={styles.viewContainer}>
-                <Text>Hello</Text>
+        <TouchableOpacity>
+            <View style={styles.container}>
+                <Image 
+                    source={ProfilePic}
+                    style={styles.profile}
+                />
+                <View style={styles.viewContainer}>
+                    <Text style={styles.firstName}>{`${params.employee.first_name} ${params.employee.last_name}`}</Text>
+                    <Text style={styles.username}>{params.preview}</Text>
+                    <Text style={styles.username}>{formatTime(params.updated)}</Text>
+                </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -48,6 +57,12 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#ffffff',
         fontWeight: 'bold'
+    },
+    profile: {
+        width: 76, 
+        height: 76, 
+        borderRadius: 76 / 2,
+        backgroundColor: '#e0e0e0'         
     }
 })
 

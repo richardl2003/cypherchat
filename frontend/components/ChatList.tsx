@@ -6,7 +6,7 @@ import Chat from './Chat';
 function ChatList() {
 
     // const chatList = useStore((state) => state.chatList)
-    const chatList: any = []
+    const chatList = useStore((state) => state.conversationList)
 
     if (chatList === null) {
         return (
@@ -31,7 +31,7 @@ function ChatList() {
             renderItem={({ item }) => (
                 <Chat item={item} />
             )}
-            keyExtractor={item => item.sender.username}
+            keyExtractor={item => item.id}
         />
     </View>
     );

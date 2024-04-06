@@ -54,8 +54,8 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 sl[sIndex].status = 'connected'
                 set((state) => ({ searchList: state.searchList = [...sl]}))
             }
-
-        }
+        },
+        'conversation_list': (data) => set((state) => ({ conversationList: state.conversationList = [...data]})),
         // Add more handlers as needed
     };
 
