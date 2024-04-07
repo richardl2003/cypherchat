@@ -2,9 +2,18 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from django.db.models import Q, Exists, OuterRef
-from .serializers import SearchSerializer, RequestSerializer, ConversationSerializer
 import json
-from .models import Connection
+from .models import Connection, User, Message
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes 
+
+from .serializers import (
+    SearchSerializer,
+    RequestSerializer,
+    ConversationSerializer,
+    MessageSerializer,
+    UserSerializer
+)
 
 class ChatConsumer(WebsocketConsumer):  
 
@@ -37,11 +46,27 @@ class ChatConsumer(WebsocketConsumer):
             'request_connect': self.receive_request_connect,
             'request_list': self.receive_request_list,
             'request_accept': self.receive_request_accept,
-            'conversation_list': self.conversation_list
+            'conversation_list': self.conversation_list,
+            'message_list': self.receive_message_list,
+            'message_type': self.receive_message_type,
+            'message_send': self.receive_message_send
         }           
         
         handler = handlers.get(source)
         handler(res)
+
+    ###### HELPER FUNCTIONS #####
+
+    def decrypt_messages(messages, message_key):
+        for obj in messages:
+            cipher = AES.new(message_key, AES.MODE_EAX, nonce=obj.nonce)
+            message = cipher.decrypt_and_verify(obj.ciphertext, obj.tag)
+            message = message.decode('utf-8')
+
+            obj.message = message
+        return messages
+   
+    ##### REQUEST HANDLERS #####
 
     def receive_search(self, data):
         query = data.get('query')
@@ -85,7 +110,8 @@ class ChatConsumer(WebsocketConsumer):
             return
         connection, _ = Connection.objects.get_or_create(
             sender=self.scope['user'],
-            receiver=receiver
+            receiver=receiver,
+            key=get_random_bytes(16)
         )
         serialized = RequestSerializer(connection)
 
@@ -126,6 +152,50 @@ class ChatConsumer(WebsocketConsumer):
         serialized = ConversationSerializer(connections, context={'user': user}, many=True)
         self.send_group(user.username, 'conversation_list', serialized.data)
 
+    def receive_message_list(self, data):
+        user = self.scope['user']
+        connectionId = data.get('connectionId')
+        page = data.get('page')
+        page_size = 15
+        try:
+            connection = Connection.objects.get(id=connectionId)
+        except Connection.DoesNotExist:
+            print("Error: could not find connection")
+            return
+        messages = Message.objects.filter(connection=connection).order_by("-timestamp")[page*page_size : (page+1)*page_size]
+        message_key = connection.key.tobytes()
+
+        messages = self.decrypt_messages(messages, message_key)
+        serialized_messages = MessageSerializer(
+            messages,
+            context = {'user': user},
+            many=True
+        )
+
+        recipient = connection.sender
+        if recipient == user:
+            recipient = connection.receiver
+
+        serialized_recipient = UserSerializer(recipient)
+
+        message_count = Message.objects.filter(connection=connection).count()
+        next_page = page + 1 if message_count > (page + 1) * page_size else None
+
+        data = {
+            'messages': serialized_messages.data,
+            'next': next_page,
+            'friend': serialized_recipient.data
+        }
+
+        self.send_group(user.username, 'message_list', data)
+
+    def receive_message_type(self, data):
+        return
+    
+    def receive_message_send(self, data):
+        return
+
+
     def send_group(self, group, source, data):
         response = {
             'type': 'broadcast_group',
@@ -138,7 +208,6 @@ class ChatConsumer(WebsocketConsumer):
     def broadcast_group(self, data):
         data.pop('type')
         self.send(text_data=json.dumps(data))   
-
 
 
 
