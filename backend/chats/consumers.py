@@ -162,6 +162,7 @@ class ChatConsumer(WebsocketConsumer):
         except Connection.DoesNotExist:
             print("Error: could not find connection")
             return
+        
         messages = Message.objects.filter(connection=connection).order_by("-timestamp")[page*page_size : (page+1)*page_size]
         message_key = connection.key.tobytes()
 
@@ -184,16 +185,69 @@ class ChatConsumer(WebsocketConsumer):
         data = {
             'messages': serialized_messages.data,
             'next': next_page,
-            'friend': serialized_recipient.data
+            'recipient': serialized_recipient.data
         }
 
         self.send_group(user.username, 'message_list', data)
 
     def receive_message_type(self, data):
-        return
+        user = self.scope['user']
+        recipient = data.get('username')
+        data = {
+            'user': user.username
+        }
+        self.send_group(recipient, 'message_type', data)
     
     def receive_message_send(self, data):
-        return
+        user = self.scope['user']
+        connectionId = data.get('connectionId')
+        message_text = data.get('message')
+        try:
+            connection = Connection.objects.get(id=connectionId)
+        except Connection.DoesNotExist:
+            print("Error: could not find connection")
+            return
+
+        chat_key = connection.key.tobytes()
+        cipher = AES.new(chat_key, AES.MODE_EAX)
+        nonce = cipher.nonce
+        ciphertext, tag = cipher.encrypt_and_digest(message_text)
+
+        message = Message.objects.create(
+            connection=connection,
+            user=user,
+            ciphertext=ciphertext,
+            nonce=nonce,
+            tag=tag
+        )
+
+        recipient = connection.sender
+        if recipient == user:
+            recipient = connection.receiver
+
+        serialized_recipient = UserSerializer(recipient)
+        serialized_message = MessageSerializer(
+            message,
+            context={'user': user}
+        )
+        data = {
+            'message': serialized_message.data,
+            'recipient': serialized_recipient.data
+        }
+        
+        serialized_recipient = UserSerializer(user)
+        serialized_message = MessageSerializer(
+            message,
+            context={'user': recipient}
+        )
+        data = {
+            'message': serialized_message.data,
+            'recipient': serialized_recipient.data
+        }
+        self.send_group(recipient.username, 'message_send', data)
+
+
+        
 
 
     def send_group(self, group, source, data):

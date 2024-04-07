@@ -14,6 +14,13 @@ interface WebSocketSlice {
     requestConnect: (username: string) => void
     requestAccept: (username: string) => void
     conversationList: any[] | null
+    messagesList: any[] | null
+    messagesNext: any | null
+    messagesTyping: any | null
+    messagesUsername: any | null
+    messageList: (connectionId: number, page: number) => void
+    messageSend: (connectionId: number, message: string) => void
+    messageType: (username: string) => void
 }
 
 export { WebSocketSlice }
