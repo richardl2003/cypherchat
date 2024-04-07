@@ -1,11 +1,26 @@
-import { View, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { ChatList, Summary, Profile } from '../components/';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ChatList, Notification, Profile, Search, Message } from '../components/';
 import { useStore } from '../utils/store';
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import React = require('react');
+
+const ChatStack = createNativeStackNavigator()
+
+function ChatStackScreen() {
+    return (
+        <ChatStack.Navigator
+            screenOptions={{
+                headerShown: false
+            }}
+        >
+            <ChatStack.Screen name="ChatList" component={ChatList} />
+            <ChatStack.Screen name="Message" component={Message} />
+        </ChatStack.Navigator>
+    )
+
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -22,27 +37,33 @@ const UserHomePage = () => {
     })
 
     return (
-    <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-              tabBarIcon: ({ focused, color, size }) => {
-                  let iconName;
-                  if (route.name ==='Chat') {
-                      iconName = focused ? 'chat-bubble' : 'chat-bubble-outline' ;
-                  } else if (route.name === 'Notifications') {
-                      iconName = focused ? 'list' : 'list-outline' ;
-                  } else if (route.name === 'Profile') {
-                      iconName = focused ? 'person' : 'person-outline' ;
-                  }
-                  return <Ionicons name={iconName} size={size} color={color} />;
-              },
-          })}>
-            <Tab.Screen name="Chat" component={ChatList} />
-            <Tab.Screen name="Summary" component={Summary} />
-            <Tab.Screen name="Profile" component={Profile} />
-        </Tab.Navigator>
-    </NavigationContainer>
+        <NavigationContainer>
+            <Tab.Navigator
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({ focused, color, size }) => {
+                        let iconName: any;
 
+                        if (route.name === 'Chat') {
+                            iconName = focused ? 'chatbubble' : 'chatbubble-outline';
+                        } else if (route.name === 'Notifications') {
+                            iconName = focused ? 'notifications' : 'notifications-outline';
+                        } else if (route.name === 'Profile') {
+                            iconName = focused ? 'person' : 'person-outline';
+                        } else if (route.name === 'Search') {
+                            iconName = focused ? 'search': 'search-outline'
+                        }
+                        return <Ionicons name={iconName} size={size} color={color} />;
+                    },
+                    tabBarActiveTintColor: 'tomato',
+                    tabBarInactiveTintColor: 'gray',
+                })}
+            >
+                <Tab.Screen name="Chat" component={ChatStackScreen} />
+                <Tab.Screen name="Search" component={Search} />
+                <Tab.Screen name="Notifications" component={Notification} />
+                <Tab.Screen name="Profile" component={Profile} />
+            </Tab.Navigator>
+        </NavigationContainer>
     );
 };
 

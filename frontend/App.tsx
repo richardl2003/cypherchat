@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { NativeRouter, Routes, Route, Navigate } from "react-router-native"
-import { Login, Register, Home, UserHomePage } from './screens';
+import { Login, Register, Home, UserHomePage, LoginError } from './screens';
 import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
@@ -17,6 +17,7 @@ export default function App() {
         />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/login-error" element={<LoginError />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </NativeRouter>

@@ -1,24 +1,23 @@
 import { View, ActivityIndicator, FlatList } from 'react-native';
 import { useStore } from '../utils/store';
 import Empty from './Empty';
-import Chat from './Chat';
+import NotificationRow from './NotificationRow';
 
-function ChatList({ navigation }: any) {
+function Notification() {
 
-    // const chatList = useStore((state) => state.chatList)
-    const chatList = useStore((state) => state.conversationList)
+    const requestList = useStore((state) => state.requestList)
 
-    if (chatList === null) {
+    if (requestList === null) {
         return (
             <ActivityIndicator style={{flex: 1}} />
         )
     }
 
-    if (chatList.length === 0) {
+    if (requestList.length === 0) {
         return (
             <Empty 
-                name='inbox'
-                message='No conversations'
+                name='bell'
+                message='No notifications'
                 centered={true}
             />
         )
@@ -27,14 +26,14 @@ function ChatList({ navigation }: any) {
     return (
     <View style={{ flex: 1}}>
         <FlatList 
-            data={chatList}
+            data={requestList}
             renderItem={({ item }) => (
-                <Chat navigation={navigation} item={item} />
+                <NotificationRow item={item} />
             )}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.sender.username}
         />
     </View>
     );
 }
 
-export default ChatList
+export default Notification

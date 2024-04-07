@@ -10,7 +10,6 @@ const Home = () => {
   const setUser = useStore((state) => state.setUser)
 
   useEffect(() => {
-    setUser({id: 0, username: "", first_name: "", last_name: "", email: ""})
     kdc.clear()
   }, [])
 

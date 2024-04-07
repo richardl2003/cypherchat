@@ -4,11 +4,13 @@ import { jwtDecode } from "jwt-decode"
 import api from '../utils/api';
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react"
+import { useStore } from "../utils/store"
 import kdc from "../utils/kdc"
 import "core-js/stable/atob"
 
 function ProtectedRoute({ children }: any) {
     const [isAuthorized, setIsAuthorized] = useState<null | boolean>(null)
+    const user = useStore((state) => state.user)
 
     // When the protected route is loaded, check if the user is authorized
     useEffect(() => {
@@ -57,7 +59,7 @@ function ProtectedRoute({ children }: any) {
         return <Text>Loading...</Text>
     }
 
-    return isAuthorized ? children : <Navigate to="/home" />
+    return (isAuthorized && user !== null) ? children : <Navigate to="/home" />
 }
 
 export default ProtectedRoute
