@@ -3,7 +3,7 @@ import { useStore } from '../utils/store';
 import Empty from './Empty';
 import Chat from './Chat';
 
-function ChatList() {
+function ChatList({ navigation }: any) {
 
     // const chatList = useStore((state) => state.chatList)
     const chatList = useStore((state) => state.conversationList)
@@ -29,7 +29,7 @@ function ChatList() {
         <FlatList 
             data={chatList}
             renderItem={({ item }) => (
-                <Chat item={item} />
+                <Chat navigation={navigation} item={item} />
             )}
             keyExtractor={item => item.id}
         />
