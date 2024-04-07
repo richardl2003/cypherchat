@@ -5,6 +5,7 @@ from Crypto.Cipher import AES
 from django.contrib.auth.models import User
 from .models import Connection
 
+# TODO REMOVE
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
@@ -20,9 +21,11 @@ class ChatSerializer(serializers.ModelSerializer):
         return instance
     
 class MessageSerializer(serializers.ModelSerializer):
+    is_me = serializers.SerializerMethodField()
+
     class Meta:
         model = Message
-        fields = ["id", "chat", "sender", "timestamp", "message"]
+        fields = ["id", "is_me", "timestamp", "message"]
         read_only_fields = ["ciphertext", "tag", "nonce"]
 
     def create(self, validated_data):
@@ -44,6 +47,9 @@ class MessageSerializer(serializers.ModelSerializer):
         chat.save()
 
         return instance
+    
+    def get_is_me(self, obj):
+        return self.context['user'] == obj.user
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,7 +82,7 @@ class RequestSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Connection
-        fields = ['id', 'sender', 'receiver', 'created']
+        fields = ['id', 'sender', 'receiver', 'created', 'key']
 
 class ConversationSerializer(serializers.ModelSerializer):
     employee = serializers.SerializerMethodField()
