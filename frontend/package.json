@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
+    "@react-navigation/native-stack": "^6.9.26",
     "axios": "^1.6.8",
     "core-js": "^3.36.1",
     "expo": "~50.0.14",
@@ -18,7 +19,9 @@
     "expo-status-bar": "~1.11.1",
     "jwt-decode": "^4.0.0",
     "react": "18.2.0",
+    "react-awesome-shapes": "^0.1.12",
     "react-native": "0.73.6",
+    "react-native-image-picker": "^7.1.2",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
     "react-router-dom": "^6.22.3",

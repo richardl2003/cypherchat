@@ -5,7 +5,7 @@ import kdc from "./kdc"
 
 // This api object with send all our requests with the access token for security
 const api = axios.create({
-    baseURL: process.env.EXPO_PUBLIC_API_URL
+    baseURL: `https://${process.env.EXPO_PUBLIC_API_URL}`,
 })
 
 api.interceptors.request.use(
