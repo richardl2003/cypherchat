@@ -1,9 +1,26 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { ChatList, Notification, Profile, Search } from '../components/';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ChatList, Notification, Profile, Search, Message } from '../components/';
 import { useStore } from '../utils/store';
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+
+const ChatStack = createNativeStackNavigator()
+
+function ChatStackScreen() {
+    return (
+        <ChatStack.Navigator
+            screenOptions={{
+                headerShown: false
+            }}
+        >
+            <ChatStack.Screen name="ChatList" component={ChatList} />
+            <ChatStack.Screen name="Message" component={Message} />
+        </ChatStack.Navigator>
+    )
+
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +58,7 @@ const UserHomePage = () => {
                     tabBarInactiveTintColor: 'gray',
                 })}
             >
-                <Tab.Screen name="Chat" component={ChatList} />
+                <Tab.Screen name="Chat" component={ChatStackScreen} />
                 <Tab.Screen name="Search" component={Search} />
                 <Tab.Screen name="Notifications" component={Notification} />
                 <Tab.Screen name="Profile" component={Profile} />

@@ -54,8 +54,8 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 sl[sIndex].status = 'connected'
                 set((state) => ({ searchList: state.searchList = [...sl]}))
             }
-
-        }
+        },
+        'conversation_list': (data) => set((state) => ({ conversationList: state.conversationList = [...data]})),
         // Add more handlers as needed
     };
 
@@ -72,6 +72,9 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 console.log('socket opened')
                 socket.send(JSON.stringify({
                     source: 'request_list'
+                }))
+                socket.send(JSON.stringify({
+                    source: 'conversation_list'
                 }))
             }
             socket.onmessage = (event) => {
@@ -128,6 +131,8 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                     username: username
                 }))
             }
-        } 
+        },
+        conversationList: null,
+
     }
 }

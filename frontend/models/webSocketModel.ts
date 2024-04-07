@@ -13,6 +13,7 @@ interface WebSocketSlice {
     requestList: any[] | null
     requestConnect: (username: string) => void
     requestAccept: (username: string) => void
+    conversationList: any[] | null
 }
 
 export { WebSocketSlice }
