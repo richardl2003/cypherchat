@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { useStore } from '../utils/store';
-import { api } from '../utils/apis';
+import { api } from '../utils/';
 
 function EditProfile() {
     const navigate = useNavigate();

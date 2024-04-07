@@ -1,16 +1,11 @@
-import stat
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from django.http import Http404
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UpdateUserProfileSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import permissions
-from .serializers import UpdateUserProfileSerializer
-from rest_framework import serializers
 
 
 def get_auth_tokens(user):
@@ -44,14 +39,9 @@ class LogInView(APIView):
             return Response(status=401)
         user_data = get_auth_tokens(user)
         return Response(user_data)
-    
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'username']
 
 class UpdateUserProfileView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def put(self, request, *args, **kwargs):
         user = request.user
