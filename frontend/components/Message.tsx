@@ -3,6 +3,7 @@ import { SafeAreaView, Text, View, TextInput, Platform, FlatList, TouchableOpaci
 import {useStore} from '../utils/store'
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons/faPaperPlane'
+import { FontAwesome5 } from '@expo/vector-icons';
 
 function MessageHeader(user: any) {
 
@@ -169,6 +170,13 @@ function MessageScreen({ navigation, route } : any) {
         navigation.setOptions({
             headerTitle: () => (
                     <MessageHeader recipient={recipient} />
+            ),
+            headerRight: () => (
+                <FontAwesome5 
+                    name='brain'
+                    size={24}
+                    onPress={() => navigation.navigate('Summary')}
+                />
             ),
             headerBackTitle: 'Back'
         })
