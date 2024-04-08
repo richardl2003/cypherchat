@@ -111,22 +111,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 15,
-        backgroundColor: "#33B5FF",
+        backgroundColor: "#777",
     },
     editIcon: {
         width: '90%',
         height: '70%',
     },
     username: {
-        color:"#33B5FF",
+        color: "#000", // Changed to black
         fontWeight: 'bold',
         fontSize: 28,
     },
     regButton: {
-        backgroundColor: "#33B5FF",  
+        backgroundColor: "#777",
     },
     subtitle: {
-        color: "#33B5FF",  
+        color: "#000",
         fontWeight: 'bold',
         fontSize: 15,
         marginBottom: 10,
@@ -134,9 +134,10 @@ const styles = StyleSheet.create({
     textinfo: {
         fontSize: 22,
         marginBottom: 5,
+        color: "#000",
     },
     horizontalLine: {
-        borderBottomColor: '#DDDDDD',
+        borderBottomColor: '#000',
         borderBottomWidth: 1,
         marginBottom: 25,
         width: '90%',
