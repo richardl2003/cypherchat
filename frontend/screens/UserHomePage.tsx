@@ -10,12 +10,8 @@ const ChatStack = createNativeStackNavigator()
 
 function ChatStackScreen() {
     return (
-        <ChatStack.Navigator
-            screenOptions={{
-                headerShown: false
-            }}
-        >
-            <ChatStack.Screen name="ChatList" component={ChatList} />
+        <ChatStack.Navigator>
+            <ChatStack.Screen name="Chat" component={ChatList} />
             <ChatStack.Screen name="Message" component={Message} />
         </ChatStack.Navigator>
     )
@@ -39,11 +35,12 @@ const UserHomePage = () => {
     return (
         <NavigationContainer>
             <Tab.Navigator
+                id="tabs"
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({ focused, color, size }) => {
                         let iconName: any;
 
-                        if (route.name === 'Chat') {
+                        if (route.name === 'ChatStack') {
                             iconName = focused ? 'chatbubble' : 'chatbubble-outline';
                         } else if (route.name === 'Notifications') {
                             iconName = focused ? 'notifications' : 'notifications-outline';
@@ -58,7 +55,7 @@ const UserHomePage = () => {
                     tabBarInactiveTintColor: 'gray',
                 })}
             >
-                <Tab.Screen name="Chat" component={ChatStackScreen} />
+                <Tab.Screen name="ChatStack" component={ChatStackScreen} options={{headerShown: false}} />
                 <Tab.Screen name="Search" component={Search} />
                 <Tab.Screen name="Notifications" component={Notification} />
                 <Tab.Screen name="Profile" component={Profile} />
