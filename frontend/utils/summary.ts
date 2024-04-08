@@ -16,7 +16,7 @@ function generateConversation(messageList: any[], recipient: any) {
     if (messageListCopy.is_me) {
         conversation += `Me: ${messageListCopy.message}\n`;
     } else {
-        conversation += `other: ${messageListCopy.message}\n`;
+        conversation += `${recipient}: ${messageListCopy.message}\n`;
     }
     });  
     return conversation
