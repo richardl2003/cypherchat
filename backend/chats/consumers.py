@@ -57,7 +57,7 @@ class ChatConsumer(WebsocketConsumer):
 
     ###### HELPER FUNCTIONS #####
 
-    def decrypt_messages(messages, message_key):
+    def decrypt_messages(self, messages, message_key):
         for obj in messages:
             cipher = AES.new(message_key, AES.MODE_EAX, nonce=obj.nonce)
             message = cipher.decrypt_and_verify(obj.ciphertext, obj.tag)
@@ -208,10 +208,11 @@ class ChatConsumer(WebsocketConsumer):
             print("Error: could not find connection")
             return
 
+        message_encoded = message_text.encode()
         chat_key = connection.key.tobytes()
         cipher = AES.new(chat_key, AES.MODE_EAX)
         nonce = cipher.nonce
-        ciphertext, tag = cipher.encrypt_and_digest(message_text)
+        ciphertext, tag = cipher.encrypt_and_digest(message_encoded)
 
         message = Message.objects.create(
             connection=connection,
@@ -220,6 +221,8 @@ class ChatConsumer(WebsocketConsumer):
             nonce=nonce,
             tag=tag
         )
+
+        message.message = message_text
 
         recipient = connection.sender
         if recipient == user:
@@ -234,6 +237,7 @@ class ChatConsumer(WebsocketConsumer):
             'message': serialized_message.data,
             'recipient': serialized_recipient.data
         }
+        self.send_group(user.username, 'message_send', data)
         
         serialized_recipient = UserSerializer(user)
         serialized_message = MessageSerializer(

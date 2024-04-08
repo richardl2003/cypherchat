@@ -82,7 +82,7 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
             }
             const convoList = [...conversationList]
             const convoIndex = convoList.findIndex(
-                item => item.recipient.username === username
+                item => item.employee.username === username
             )
             if (convoIndex >= 0) {
                 const item = convoList[convoIndex]
@@ -191,7 +191,7 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
         messagesTyping: null,
         messagesUsername: null,
 
-        messageList: (connectionId: number, page: number) => {
+        messageList: (connectionId: number, page=0) => {
             const socket = get().socket
             if (page === 0) {
                 set((state) => ({
@@ -214,7 +214,7 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 }))
             }
             else {
-                set((state) => ({messagesList: state.messagesList = null}))
+                set((state) => ({messagesList: state.messagesList = []}))
             }
         },
 

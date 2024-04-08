@@ -7,7 +7,7 @@ function Chat(props: any) {
 
     return (
         <TouchableOpacity onPress={() => {
-            props.navigation.navigate('Message')
+            props.navigation.navigate('Message', {item: params})
         }}>
             <View style={styles.container}>
                 <Image 
