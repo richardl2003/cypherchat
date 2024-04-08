@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState, useEffect } from 'react';
-import { SafeAreaView, Text, View, TextInput, Platform, FlatList, TouchableOpacity, KeyboardAvoidingView, InputAccessoryView } from 'react-native';
+import { SafeAreaView, Text, View, TextInput, Platform, FlatList, TouchableOpacity, KeyboardAvoidingView, InputAccessoryView, Alert } from 'react-native';
 import {useStore} from '../utils/store'
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons/faPaperPlane'
@@ -166,6 +166,16 @@ function MessageScreen({ navigation, route } : any) {
     const connectionId = item.id
     const recipient = item.employee
 
+    function handleSummary() {
+        if (messageList.length === 0) {
+            Alert.alert('No messages to summarize')
+            return
+        } else {
+            console.log(`recipient: ${JSON.stringify(recipient)}`)
+            navigation.navigate('Summary', {recipient: recipient})
+        }
+    }
+
     useLayoutEffect(() => {
         navigation.setOptions({
             headerTitle: () => (
@@ -175,7 +185,7 @@ function MessageScreen({ navigation, route } : any) {
                 <FontAwesome5 
                     name='brain'
                     size={24}
-                    onPress={() => navigation.navigate('Summary')}
+                    onPress={handleSummary}
                 />
             ),
             headerBackTitle: 'Back'

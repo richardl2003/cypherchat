@@ -1,31 +1,23 @@
 import { View, Text } from 'react-native'
-import { FontAwesome6 } from '@expo/vector-icons'
+import { useEffect, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useStore } from '../utils/store'
+import { summaryUtils } from '../utils/'
 
-function Summary(props: any) {
+function Summary({ route }: any) {
+
+    const messageList = useStore(state => state.messagesList)
+    const recipient = route.params.recipient
+    const [conversation, setConversation] = useState('')
+
+    useEffect(() => {
+        setConversation(summaryUtils.generateConversation(messageList, recipient))
+    }, [])
+
     return (
-        <View 
-            style={{
-                flex: 1,
-                justifyContent: props.centered ? 'center' : 'flex-start',
-                alignItems: 'center',
-                paddingVertical: 120                      
-            }}
-        >
-            <FontAwesome6 
-                name={props.name} 
-                size={90} 
-                color="#d0d0d0" 
-                style={{ marginBottom: 20}}
-            />
-            <Text
-				style={{
-					color: '#c3c3c3',
-					fontSize: 16
-				}}            
-            >
-                {props.message}
-            </Text>
-        </View>
+        <SafeAreaView>
+            <Text>{conversation}</Text>
+        </SafeAreaView>
     )
 }
 
