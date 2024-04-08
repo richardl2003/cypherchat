@@ -4,6 +4,10 @@ import ProfilePic from '../assets/images/default_avatar.jpg'
 
 function Chat(props: any) {
     const params = props.item
+    let preview = props.item.preview
+    if (preview.length > 37) {
+        preview = preview.substring(0, 37) + '...'
+    }
 
     return (
         <TouchableOpacity onPress={() => {
@@ -16,7 +20,7 @@ function Chat(props: any) {
                 />
                 <View style={styles.viewContainer}>
                     <Text style={styles.firstName}>{`${params.employee.first_name} ${params.employee.last_name}`}</Text>
-                    <Text style={styles.username}>{params.preview}</Text>
+                    <Text style={styles.username}>{preview}</Text>
                     <Text style={styles.username}>{formatTime(params.updated)}</Text>
                 </View>
             </View>

@@ -1,7 +1,8 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ChatList, Notification, Profile, Search, Message } from '../components/';
+import { kdc } from '../utils/';
+import { ChatList, Notification, Profile, Search, Message, Summary } from '../components/';
 import { useStore } from '../utils/store';
 import { useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,6 +14,7 @@ function ChatStackScreen() {
         <ChatStack.Navigator>
             <ChatStack.Screen name="Chat" component={ChatList} />
             <ChatStack.Screen name="Message" component={Message} />
+            <ChatStack.Screen name="Summary" component={Summary} />
         </ChatStack.Navigator>
     )
 

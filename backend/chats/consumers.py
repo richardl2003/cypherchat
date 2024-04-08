@@ -2,6 +2,7 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from django.contrib.auth.models import User
 from django.db.models import Q, Exists, OuterRef
+from django.db.models.functions import Coalesce
 import json
 from .models import Connection, User, Message
 from Crypto.Cipher import AES
@@ -145,9 +146,19 @@ class ChatConsumer(WebsocketConsumer):
 
     def conversation_list(self, data):
         user = self.scope['user']
+
+        latest_message = Message.objects.filter(
+            connection=OuterRef('id')
+        ).order_by('-timestamp')[:1]
+
         connections = Connection.objects.filter(
             Q(sender=user) | Q(receiver=user),
             accepted=True
+        ).annotate(
+            last_text=latest_message.values('message'),
+            latest_created=latest_message.values('timestamp')
+        ).order_by(
+            Coalesce('latest_created', 'updated').desc()
         )
         serialized = ConversationSerializer(connections, context={'user': user}, many=True)
         self.send_group(user.username, 'conversation_list', serialized.data)

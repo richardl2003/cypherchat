@@ -87,6 +87,7 @@ class RequestSerializer(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
     employee = serializers.SerializerMethodField()
     preview = serializers.SerializerMethodField()
+    updated = serializers.SerializerMethodField()
     
     class Meta:
         model = Connection
@@ -102,6 +103,13 @@ class ConversationSerializer(serializers.ModelSerializer):
             print('Error: User is not part of this connection')
     
     def get_preview(self, obj):
-        return "Click to view conversation"
+        return "Press to view conversation"
+
+    def get_updated(self, obj):
+        if not hasattr(obj, 'latest_created'):
+            date = obj.updated
+        else:
+            date = obj.latest_created or obj.updated
+        return date.isoformat()
     
 
