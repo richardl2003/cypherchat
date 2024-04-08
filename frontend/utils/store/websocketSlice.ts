@@ -38,21 +38,21 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
                 }
             } 
             const sl = get().searchList
-            if (sl === null) {
-                return
-            }
-            if (sl.includes(data.sender)) {
+
+            if (sl && sl.includes(data.sender)) {
                 const sIndex = sl.findIndex(
                     user => user.username === data.sender.username
                 )
                 sl[sIndex].status = 'connected'
                 set((state) => ({ searchList: state.searchList = [...sl]}))
             } else {
-                const sIndex = sl.findIndex(
-                    (user) => user.username === data.receiver.username
-                )
-                sl[sIndex].status = 'connected'
-                set((state) => ({ searchList: state.searchList = [...sl]}))
+                if (sl) {
+                    const sIndex = sl.findIndex(
+                        (user) => user.username === data.receiver.username
+                    )
+                    sl[sIndex].status = 'connected'
+                    set((state) => ({ searchList: state.searchList = [...sl]}))
+                }
             }
             // Call conversation list
             const socket = get().socket
