@@ -63,6 +63,51 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
             }
         },
         'conversation_list': (data) => set((state) => ({ conversationList: state.conversationList = [...data]})),
+        'message_list': (data) => {
+            const ml = get().messagesList
+            if (ml) {
+                set((state) => ({
+                    messagesList: state.messagesList = [...ml , ...data.messages],
+                    messagesNext: state.messagesNext = data.next,
+                    messagesUsername: state.messagesUsername = data.recipient.username
+                }))               
+            }
+
+        },
+        'message_send': (data) => {
+            const username = data.recipient.username
+            const conversationList = get().conversationList
+            if (conversationList === null){
+                return
+            }
+            const convoList = [...conversationList]
+            const convoIndex = convoList.findIndex(
+                item => item.employee.username === username
+            )
+            if (convoIndex >= 0) {
+                const item = convoList[convoIndex]
+                item.preview = data.message.message
+                item.updated = data.message.timestamp
+                convoList.splice(convoIndex, 1)
+                convoList.unshift(item)
+                set((state) => ({conversationList: state.conversationList = convoList}))
+            }
+
+            if (username !== get().messagesUsername) {
+                return
+            }
+            const messagesList = get().messagesList
+            if (messagesList){
+                set((state) => ({
+                    messagesList: state.messagesList = [data.message, ...messagesList],
+                    messagesTyping: null
+                }))
+            }
+        },
+        'message_type': (data) => {
+            if (data.username !== get().messagesUsername) return
+            set((state) => ({messagesTyping: state.messagesTyping = new Date()}))
+        },
         // Add more handlers as needed
     };
 
@@ -140,6 +185,59 @@ export const createWebSocketSlice: StateCreator<WebSocketSlice> = (set, get) => 
             }
         },
         conversationList: null,
+
+        messagesList: [],
+        messagesNext: null,
+        messagesTyping: null,
+        messagesUsername: null,
+
+        messageList: (connectionId: number, page=0) => {
+            const socket = get().socket
+            if (page === 0) {
+                set((state) => ({
+                    messagesList: state.messagesList = [],
+                    messagesNext: state.messagesNext = null,
+                    messagesTyping: state.messagesTyping = null,
+                    messagesUsername: state.messagesUsername = null
+                }))
+            }
+            else {
+                set((state) => ({
+                    messagesNext: null
+                }))
+            }
+            if (socket) {
+                socket.send(JSON.stringify({
+                    source: 'message_list',
+                    connectionId: connectionId,
+                    page: page
+                }))
+            }
+            else {
+                set((state) => ({messagesList: state.messagesList = []}))
+            }
+        },
+
+        messageSend: (connectionId: number, message: string) => {
+            const socket = get().socket
+            if (socket) {
+                socket.send(JSON.stringify({
+                    source: 'message_send',
+                    connectionId: connectionId,
+                    message: message
+                }))
+            }
+        },
+
+        messageType: (username: string) => {
+            const socket = get().socket
+            if (socket) {
+                socket.send(JSON.stringify({
+                    source: 'message_type',
+                    username: username
+                }))
+            }
+        }
 
     }
 }
