@@ -102,6 +102,6 @@ class ConversationSerializer(serializers.ModelSerializer):
             print('Error: User is not part of this connection')
     
     def get_preview(self, obj):
-        return "Preview of conversation"
+        return "Click to view conversation"
     
 

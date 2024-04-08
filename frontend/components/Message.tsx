@@ -1,19 +1,16 @@
 import { useLayoutEffect, useState, useEffect } from 'react';
-import { SafeAreaView, Text, View, ActivityIndicator, TextInput, Platform, FlatList, InputAccessoryView, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Text, View, TextInput, Platform, FlatList, TouchableOpacity, KeyboardAvoidingView, InputAccessoryView } from 'react-native';
 import {useStore} from '../utils/store'
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome"
 import { faPaperPlane } from '@fortawesome/free-regular-svg-icons/faPaperPlane'
 
-function MessageHeader(recipient: any) {
+function MessageHeader(user: any) {
+
+    const first_name = user.recipient.first_name
+    const last_name = user.recipient.last_name
     return (
-        <View
-            style={{
-                flex: 1,
-                flexDirection: 'row',
-                alignItems: 'center'
-            }}
-        >
-            <Text style={{color: '#202020', marginLeft: 10, fontSize: 18, fontWeight: 'bold'}}>{recipient.first_name}</Text>
+        <View>
+            <Text style={{color: '#202020', marginLeft: 10, fontSize: 18, fontWeight: 'bold'}}>{first_name} {last_name}</Text>
         </View>
     )
 }
@@ -108,7 +105,6 @@ function MessageInput({message, setMessage, onSend}: any) {
         <View style={{
             paddingHorizontal: 10,
 			paddingBottom: 10,
-			backgroundColor: 'white',
 			flexDirection: 'row',
 			alignItems: 'center'
         }}
@@ -122,7 +118,7 @@ function MessageInput({message, setMessage, onSend}: any) {
                     flex: 1,
 					paddingHorizontal: 18,
 					borderWidth: 1,
-					borderRadius: 25,
+					borderRadius: 30,
 					borderColor: '#d0d0d0',
 					backgroundColor: 'white',
 					height: 50
@@ -143,6 +139,14 @@ function MessageInput({message, setMessage, onSend}: any) {
 }
 
 function MessageScreen({ navigation, route } : any) {
+
+    useEffect(() => {
+        navigation.getParent('tabs').setOptions({ tabBarStyle: { display: 'none'}})
+        
+        return () => {
+            navigation.getParent('tabs').setOptions({ tabBarStyle: { display: {} }})
+        }
+    }, [])
 
     const item = route.params.item
 
@@ -165,7 +169,8 @@ function MessageScreen({ navigation, route } : any) {
         navigation.setOptions({
             headerTitle: () => (
                     <MessageHeader recipient={recipient} />
-            )
+            ),
+            headerBackTitle: 'Back'
         })
     }, [])
 
@@ -192,7 +197,6 @@ function MessageScreen({ navigation, route } : any) {
             <View style={{flex: 1, marginBottom: Platform.OS === 'ios' ? 60 : 0}}>
                 <FlatList 
                     automaticallyAdjustKeyboardInsets={true}
-                    contentContainerStyle={{padding: 30}}
                     data={[{id: -1}, ...messagesList]}
                     inverted={true}
                     keyExtractor={item => item.id}
@@ -204,16 +208,15 @@ function MessageScreen({ navigation, route } : any) {
                     renderItem={({item, index}: any) => (
                         <MessageBubble index={index} message={item} recipient={recipient} />
                     )}
-                />
-            </View>
-
+                />                                                        
+            </View>         
             {Platform.OS === 'ios' ? (
-                <InputAccessoryView>
+                    <InputAccessoryView>
+                        <MessageInput message={message} setMessage={onType} onSend={onSend} />
+                    </InputAccessoryView>
+                ) : (
                     <MessageInput message={message} setMessage={onType} onSend={onSend} />
-                </InputAccessoryView>
-            ) : (
-                <MessageInput message={message} setMessage={onType} onSend={onSend} />
-            )}
+            )}                                                         
         </SafeAreaView>
     )
 }
