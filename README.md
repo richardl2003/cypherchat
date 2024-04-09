@@ -32,6 +32,8 @@ python -m venv env
 source env/bin/activate
 cd backend
 pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
 ```
 3. Backend on Windows
 ```sh
@@ -39,8 +41,15 @@ python3 -m venv env
 .\env\bin\activate
 cd backend
 pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
 ```
 For the backend setup, we need to initalize a Python virtual environment, activate it, and install your dependencies
+
+Backend setup:
+1. Initialize virtual environment and activate it
+2. Install dependencies
+3. Generate the SQL schemas onto your local Postgres instance
 
 Example run of making sure your virtual environment is running:
 ```sh
