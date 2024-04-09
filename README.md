@@ -8,7 +8,7 @@ Secure chat application for organizations
 
 * Node
 * Android Studio
-* Python 
+* Python
 * Expo React Native
 * Django
 * Postgresql
@@ -18,7 +18,8 @@ Secure chat application for organizations
 ### Dev setup
 1. Download [PostgreSQL](https://www.postgresql.org/)
 2. Download [ngrok](https://ngrok.com/download)
-3. Download [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) 
+3. Download [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+* For Windows please download [Redis-x64-5.0.14.1.zip](https://github.com/tporadowski/redis/releases) and after unzipping the file open redis-server.exe
 4. Setup [OpenAI](https://platform.openai.com/docs/quickstart?context=python)
 
 ### Installion of dependencies
@@ -50,6 +51,18 @@ Backend setup:
 1. Initialize virtual environment and activate it
 2. Install dependencies
 3. Generate the SQL schemas onto your local Postgres instance
+* Please note that for windows the setting.py file should be modified as follows:
+* DATABASES = {
+  "default": {
+  "ENGINE": "django.db.backends.postgresql",
+  "NAME": "postgres",
+  "USER": "postgres",
+  "PASSWORD": "pass",
+  "HOST": "localhost",
+  "PORT": "5432",
+  }
+  }
+* PASSWORD should be replaced by user's password for the pstgresql Database
 
 Example run of making sure your virtual environment is running:
 ```sh
