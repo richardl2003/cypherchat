@@ -6,21 +6,27 @@ Secure chat application for organizations
 
 ### Dependencies
 
-* Node
-* Android Studio
-* Python
-* Expo React Native
-* Django
-* Postgresql
-* Redis
-* Ngrok
+Before starting, ensure you have the following tools and technologies installed:
 
-### Dev setup
-1. Download [PostgreSQL](https://www.postgresql.org/)
-2. Download [ngrok](https://ngrok.com/download)
-3. Download [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
-* For Windows please download [Redis-x64-5.0.14.1.zip](https://github.com/tporadowski/redis/releases) and after unzipping the file open redis-server.exe
-4. Setup [OpenAI](https://platform.openai.com/docs/quickstart?context=python)
+- Node.js
+- Android Studio (for Android development support)
+- Python 3.x
+- Expo (for React Native development)
+- Django (for backend development)
+- PostgreSQL (database system)
+- Redis (for caching and message brokering)
+- Ngrok (for exposing local servers to the internet)
+
+### Dev Setup
+
+#### 1. Download and Install Dependencies:
+
+- **PostgreSQL:** [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
+- **Ngrok:** [https://ngrok.com/download](https://ngrok.com/download)
+- **Redis:**
+  - General download: [https://redis.io/download](https://redis.io/download)
+  - For Windows, download Redis-x64-5.0.14.1.zip from [https://github.com/tporadowski/redis/releases](https://github.com/tporadowski/redis/releases), unzip, and run `redis-server.exe`.
+- **OpenAI Setup:** Follow the Quickstart guide at [https://platform.openai.com/docs/quickstart](https://platform.openai.com/docs/quickstart) to set up your API key and environment.
 
 ### Installion of dependencies
 1. Frontend
@@ -47,22 +53,56 @@ python manage.py migrate
 ```
 For the backend setup, we need to initalize a Python virtual environment, activate it, and install your dependencies
 
-Backend setup:
-1. Initialize virtual environment and activate it
-2. Install dependencies
-3. Generate the SQL schemas onto your local Postgres instance
-* Please note that for windows the setting.py file should be modified as follows:
-* DATABASES = {
-  "default": {
-  "ENGINE": "django.db.backends.postgresql",
-  "NAME": "postgres",
-  "USER": "postgres",
-  "PASSWORD": "pass",
-  "HOST": "localhost",
-  "PORT": "5432",
-  }
-  }
-* PASSWORD should be replaced by user's password for the pstgresql Database
+### Backend setup
+
+Follow these steps to set up your project environment:
+
+##### 1. Initialize and Activate the Virtual Environment
+
+- **For Unix/Linux/macOS**:
+
+  ```bash
+  python3 -m venv env
+  source env/bin/activate
+  ```
+
+- **For Windows**:
+
+  ```bash
+  python -m venv env
+  .\env\Scripts\activate
+  ```
+
+##### 2. Install Dependencies
+
+Install the required project dependencies by running:
+
+```bash
+pip install -r requirements.txt
+```
+
+##### 3. Generate SQL Schemas on Your Local PostgreSQL Instance
+
+Ensure your local PostgreSQL instance is running, then execute the SQL schema generation commands specific to your project.
+
+**Note for Windows Users Regarding Database Configuration:**
+
+In the `settings.py` file, modify the `DATABASES` configuration to match your local PostgreSQL setup:
+
+```python
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "your_password_here",
+        "HOST": "localhost",
+        "PORT": "5432",
+    }
+}
+```
+
+Replace `"your_password_here"` with your actual PostgreSQL user password.
 
 Example run of making sure your virtual environment is running:
 ```sh
