@@ -6,7 +6,8 @@ import { openaiUtils } from '../../utils/'
 export const createGPTSlice: StateCreator<GPTSlice> = (set) => ({
     summary: null,
     getSummary: async (query: string) => {
-        const response = await openaiUtils.gpt(query)
-        set((state) => ({ summary: state.summary = response.message.content}))
+        const response = await openaiUtils.gpt(query);
+        set((state) => ({ summary: response.message.content }));
+        return response.message.content;
     }
 })
