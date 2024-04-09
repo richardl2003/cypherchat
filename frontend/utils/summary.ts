@@ -33,7 +33,8 @@ export function extractImportantPoints(messageList: any[], recipient: any) {
       keywords.some(keyword => message.message.toLowerCase().includes(keyword)) ||
       fileExtensionsPattern.test(message.message))
     .map(message => {
-      const prefix = message.is_me ? 'Me: ' : `${recipient}: `;
+      const prefix = message.is_me ? 'Me: ' : `${recipient.first_name}: `;
+      console.log(`recipient: ${recipient.first_name}`)
       // Reset the lastIndex of the global regex to ensure proper matching
       fileExtensionsPattern.lastIndex = 0;
       let parts = [], match;
