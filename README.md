@@ -50,6 +50,18 @@ Backend setup:
 1. Initialize virtual environment and activate it
 2. Install dependencies
 3. Generate the SQL schemas onto your local Postgres instance
+* Please note that for windows the setting.py file should be modified as follows: 
+* DATABASES = {
+  "default": {
+  "ENGINE": "django.db.backends.postgresql",
+  "NAME": "postgres",
+  "USER": "postgres",
+  "PASSWORD": "pass",
+  "HOST": "localhost",
+  "PORT": "5432",
+  }
+  }
+* PASSWORD should be replaced by user's password for the pstgresql Database
 
 Example run of making sure your virtual environment is running:
 ```sh
