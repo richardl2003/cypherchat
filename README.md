@@ -19,6 +19,7 @@ Secure chat application for organizations
 1. Download [PostgreSQL](https://www.postgresql.org/)
 2. Download [ngrok](https://ngrok.com/download)
 3. Download [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) 
+* For Windows please download [Redis-x64-5.0.14.1.zip](https://github.com/tporadowski/redis/releases) and after unzipping the file open redis-server.exe
 4. Setup [OpenAI](https://platform.openai.com/docs/quickstart?context=python)
 
 ### Installion of dependencies
